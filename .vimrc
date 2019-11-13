@@ -19,6 +19,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox' "主题
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-surround'
+"markdown预览插件
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 " Initialize plugin system
 call plug#end()
@@ -79,6 +81,11 @@ set ignorecase "搜索时忽略大小写。
 set smartcase "如果同时打开了ignorecase，那么对于只有一个大写字母的搜索词，将大小写敏感；其他情况都是大小写不敏感。比如，搜索Test时，将不匹配test；搜索test时，将匹配Test。
 
 
+""""""""""""""""""""""""""""""""
+" 插件配置
+""""""""""""""""""""""""""""""""
+
+
 """""""""""""""""""""""""""""""
 "键盘映射
 """""""""""""""""""""""""""""""
@@ -87,3 +94,8 @@ let mapleader = "\<space>"
 nmap <leader>wq :wq<CR>
 nmap <leader>w :w<CR> 
 nmap <C-n> :nohls<CR>
+
+" markdown-preview "
+nmap <leader>mp :MarkdownPreview<CR>
+nmap <leader>mps :MarkdownPreviewStop<CR>
+nmap <leader>mpt :MarkdownPreviewToggle<CR>
