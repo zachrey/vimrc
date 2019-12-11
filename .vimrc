@@ -50,10 +50,16 @@ else
 endif
 Plug 'kristijanhusak/defx-git'
 Plug 'kristijanhusak/defx-icons'
+" 注释插件
 Plug 'scrooloose/nerdcommenter'
 Plug 'neoclide/vim-jsx-improve', { 'for': ['javascript', 'typescript'] }
-Plug 'raimondi/delimitMate'
+" 自动补充括号的插件
+Plug 'raimondi/delimitMate' 
+" git 插件
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" 欢迎主页插件
 Plug 'mhinz/vim-startify'
 call plug#end()
 
@@ -135,8 +141,12 @@ nnoremap <leader>mps :MarkdownPreviewStop<cr>
 nnoremap <leader>mpt :MarkdownPreviewToggle<cr>
 nnoremap <leader>ev :split $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
-nnoremap <leader>vp :vsplit<cr>
-nnoremap <leader>sp :split<cr>
+nnoremap <silent><leader>vp :vsplit<cr>
+nnoremap <silent><leader>sp :split<cr>
+nnoremap <silent>w+ :vertical resize +10<cr>
+nnoremap <silent>w- :vertical resize -10<cr>
+nnoremap <silent>w; :resize +5<cr>
+nnoremap <silent>w, :resize -5<cr>
 
 inoremap <c-u> <esc>gUiw
 inoremap jk <esc>
@@ -178,8 +188,6 @@ let g:coc_global_extensions = [
             \]
 vmap <C-j> <Plug>(coc-snippets-select)
 imap <C-j> <Plug>(coc-snippets-expand-jump)
-nmap <silent> [c :call CocActionAsync('diagnosticPrevious')<CR>
-nmap <silent> ]c :call CocActionAsync('diagnosticNext')<CR>
 nmap <silent> <leader>h :call CocAction('doHover')<CR>
 command! OR :call CocActionAsync('runCommand', 'editor.action.organizeImport')
 
@@ -236,13 +244,15 @@ let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'cocstatus', 'currentfunction', 'readonly', 'filename', 'modified' ] ]
+      \             [ 'cocstatus', 'currentfunction', 'currentBranch', 'readonly', 'filename', 'modified' ] ]
       \ },
       \ 'component_function': {
       \   'cocstatus': 'coc#status',
-      \   'currentfunction': 'LightlineGitBlame'
+      \   'currentfunction': 'LightlineGitBlame',
+      \   'currentBranch': 'fugitive#head',
       \ },
       \ }
+
 function! LightlineGitBlame() abort
   let blame = get(b:, 'coc_git_blame', '')
   " return blame
@@ -250,7 +260,7 @@ function! LightlineGitBlame() abort
 endfunction
 
 "===== defx 配置
-map <silent> - :Defx -columns=icons:indent:filename:type<CR>
+map <silent> - :Defx -columns=git:indent:icons:filename:type<CR>
 call defx#custom#option('_', {
       \ 'winwidth': 40,
       \ 'split': 'vertical',
@@ -272,7 +282,7 @@ function! s:defx_my_settings() abort
   \ defx#do_action('open_or_close_tree') :
   \ defx#do_action('drop',)
   " 目录定位到当前文件位置
-  nnoremap <silent><leader>dc :Defx<CR> :<C-u>:Defx -columns=icons:indent:filename:type -search=`expand('%:p')` `getcwd()`<CR> <c-w>l<CR>
+  nnoremap <silent><leader>dc :Defx<CR> :<C-u>:Defx -columns=git:indent:icons:filename:type -search=`expand('%:p')` `getcwd()`<CR> <c-w>l<CR>
 
   nnoremap <silent><buffer><expr> s defx#do_action('drop', 'split')
   nnoremap <silent><buffer><expr> v defx#do_action('drop', 'vsplit')
@@ -330,10 +340,23 @@ endfunction
 function GetCurFileAbsoultePath()
   let cur_dir=getcwd()
   let cur_file_name=getreg('%')
-  let dir_filename=cur_dir."\".cur_file_name
+  let dir_filename=cur_dir."".cur_file_name
   echo "copy      ".dir_filename."         done"
   call setreg('+',dir_filename)
 endfunction
 
 nnoremap <silent><f9> :call GetCurFileRelativePath()<cr>
 nnoremap <silent><f8> :call GetCurFileRelativePath()<cr>
+" 注释插件配置
+let NERDSpaceDelims=1
+
+let g:startify_lists = [
+      \ { 'type': 'files',     'header': ['   MRU']            },
+      \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
+      \ { 'type': 'sessions',  'header': ['   Sessions']       },
+      \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+      \ { 'type': 'commands',  'header': ['   Commands']       },
+      \ ]
+
+
+nnoremap <leader>cd :cd ~/Documents/workspace/gitspace/bear-web<cr>
